@@ -6,6 +6,7 @@ const API_KEY = "2531892-4cdfe45a284aadca5232e3015";
 class MyInput extends Component {
   state = {
     keyWord: "",
+    data: {},
     images: [],
     error: false,
     count: 15
@@ -20,7 +21,7 @@ class MyInput extends Component {
     e.preventDefault();
     let value = e.target.elements.data.value.trim();
     if (value) {
-      let data = await axios.get(
+      let imgs = await axios.get(
         "https://pixabay.com/api/?key=" +
           API_KEY +
           "&q=" +
@@ -29,9 +30,14 @@ class MyInput extends Component {
           this.state.count +
           "&safesearch=true"
       );
-      if (data.status === 200) {
-        console.log(data.hits);
-        this.setState({ images: data });
+      console.log(imgs);
+
+      this.setState({ data: imgs });
+      this.setState({ images: imgs.data.hits });
+      console.log();
+
+      if (imgs.hits > 0) {
+        this.setState({ images: "0" });
       }
     } else {
       //modal
@@ -43,7 +49,11 @@ class MyInput extends Component {
   };
 
   render() {
-    console.log(this.state.data);
+    console.log(this.state);
+    if (this.state.images.data) {
+      const { pics } = this.state.images.data.hits;
+      console.log(pics);
+    }
     return (
       <>
         <E_Modal error={this.state.error} onToggle={this.onToggle} />
@@ -68,9 +78,11 @@ class MyInput extends Component {
                     Search
                   </button>
                 </div>
-                {this.state.images[1]}
               </div>
             </form>
+            {this.state.images.length > 0
+              ? this.state.images.map(r => <p key={uuid()}>{r.id}</p>)
+              : ""}
           </div>
         </div>
       </>
