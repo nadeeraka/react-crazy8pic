@@ -6,8 +6,9 @@ const API_KEY = "2531892-4cdfe45a284aadca5232e3015";
 class MyInput extends Component {
   state = {
     keyWord: "",
-    data: [],
-    error: false
+    images: [],
+    error: false,
+    count: 15
   };
   componentDidMount() {
     console.log("did mount");
@@ -15,15 +16,23 @@ class MyInput extends Component {
   componentDidUpdate() {
     console.log("component did update");
   }
-  onSubmit = e => {
+  onSubmit = async e => {
     e.preventDefault();
     let value = e.target.elements.data.value.trim();
     if (value) {
-      let URL =
+      let data = await axios.get(
         "https://pixabay.com/api/?key=" +
-        API_KEY +
-        "&q=" +
-        encodeURIComponent(value);
+          API_KEY +
+          "&q=" +
+          encodeURIComponent(value) +
+          "&Image_type=photo&per_page=" +
+          this.state.count +
+          "&safesearch=true"
+      );
+      if (data.status === 200) {
+        console.log(data.hits);
+        this.setState({ images: data });
+      }
     } else {
       //modal
       this.setState({ error: true });
@@ -34,6 +43,7 @@ class MyInput extends Component {
   };
 
   render() {
+    console.log(this.state.data);
     return (
       <>
         <E_Modal error={this.state.error} onToggle={this.onToggle} />
@@ -58,7 +68,7 @@ class MyInput extends Component {
                     Search
                   </button>
                 </div>
-                {this.state.data}
+                {this.state.images[1]}
               </div>
             </form>
           </div>
