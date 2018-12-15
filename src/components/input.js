@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import uuid from "uuid";
 import E_Modal from "./error";
+import Result from "./result";
 const API_KEY = "2531892-4cdfe45a284aadca5232e3015";
 class MyInput extends Component {
   state = {
@@ -32,15 +33,14 @@ class MyInput extends Component {
       );
       console.log(imgs);
 
-      this.setState({ data: imgs });
-      this.setState({ images: imgs.data.hits });
-      console.log();
-
-      if (imgs.hits > 0) {
-        this.setState({ images: "0" });
+      if (imgs) {
+        this.setState({ data: imgs });
+        this.setState({ images: imgs.data.hits });
+      } else {
+        // update the modal
       }
     } else {
-      //modal
+      // modal
       this.setState({ error: true });
     }
   };
@@ -80,11 +80,11 @@ class MyInput extends Component {
                 </div>
               </div>
             </form>
-            {this.state.images.length > 0
-              ? this.state.images.map(r => <p key={uuid()}>{r.id}</p>)
-              : ""}
           </div>
         </div>
+        {this.state.images.map(r => (
+          <Result key={uuid()} textValue={r} />
+        ))}
       </>
     );
   }
